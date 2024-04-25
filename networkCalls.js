@@ -17,6 +17,7 @@ async function readData() {
 
 async function writeData(data) {
     console.log("We have a book to record here")
+    console.log(data)
     const client = await getGoogleSheetsClient();
     await appendToGoogleSheet(client, sheetId, tabName, range, data)
 }

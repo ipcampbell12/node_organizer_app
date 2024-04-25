@@ -26,32 +26,21 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        networkDebugger("This endpoint was called")
-        const { error } = validatetask(req.body);
+        console.log("Post endpoint called")
+        // networkDebugger("This endpoint was called")
+        // const { error } = validatetask(req.body);
 
-        if (error) return res.status(400).send(error.details[0].message);
-        //networkDebugger("We got this far")
+        // if (error) return res.status(400).send(error.details[0].message);
+
+        const task = req.body;
+        const taskArr = Object.values(task)
         const tasks = await readData();
+        const id = await tasks.length + 1;
+        console.log(id)
 
-        const tasksFromGoogle = await gettask(req.body.title, req.body.quantity)
-
-        //console.log(tasksFromGoogle)
-
-        const tasksWithIds = await Promise.all(tasksFromGoogle
-            .map(
-                (task, index) => ({ ...task, id: tasks.length + index }))
-            .map(task => update(task)));
-
-        writeData(tasksWithIds);
-        //console.log({ title: tasksWithIds[0][1], summary: tasksWithIds[0][4] })
-        sendMail("You've added another task",
-            `Title: 
-            ${tasksWithIds[0][1]}, 
-            
-            Summary: 
-            ${tasksWithIds[0][4]}`)
-
-        res.send(tasksWithIds)
+        console.log("task: ", taskArr)
+        writeData([[id, ...taskArr]])
+        res.send(taskArr)
     } catch (err) {
         networkDebugger(err)
     }
@@ -77,16 +66,20 @@ router.delete('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
 
-        const { error } = validatetask(req.body);
+        const { error } = validateTask(req.body);
 
         if (error) return res.status(400).send(error.details[0].message);
 
         const task = {
             id: req.params.id,
             title: req.body.title,
-            author: req.body.author,
-            pages: req.body.pages,
-            summary: req.body.summary,
+            description: req.body.description,
+            workHome: req.body.workHome,
+            when: req.body.when,
+            type: req.body.type,
+            frequency: req.body.frequency,
+            reminder: req.body.reminder,
+            calEvent: req.body.calEvent
         }
         networkDebugger('Here is the task: ', task)
 

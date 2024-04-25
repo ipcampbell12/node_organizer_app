@@ -3,8 +3,7 @@ const Joi = require('joi');
 
 function validateBook(person) {
     const schema = Joi.object({
-        title: Joi.string().min(4).required(),
-        quantity: Joi.number().default(1)
+        title: Joi.string().min(4).required()
     });
 
     return schema.validate(person);
